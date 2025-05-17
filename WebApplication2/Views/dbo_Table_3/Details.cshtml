@@ -1,0 +1,19 @@
+﻿@model CSWebApp.Models.dbo_Table_3
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>dbo_Table_3</h4>
+    <hr />
+    <dl class="row">
+        @Model.Aaaa
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Aaaa">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
