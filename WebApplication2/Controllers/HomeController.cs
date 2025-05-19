@@ -22,27 +22,27 @@ namespace WebApplication2.Controllers
         public IActionResult Privacy()
         {
 
-            string connectString = "Server=(localdb)\\mssqllocaldb;Database=CSWebAppContext-91e67821-630c-4958-a9cc-29f9825a8850;Trusted_Connection=True;MultipleActiveResultSets=true";
-            SqlConnection connection = null;
-            SqlTransaction tran = null;
+            string ConnectString = "Server=(localdb)\\mssqllocaldb;Database=CSWebAppContext-91e67821-630c-4958-a9cc-29f9825a8850;Trusted_Connection=True;MultipleActiveResultSets=true";
+            SqlConnection Connection = null;
+            SqlTransaction Tran = null;
             try
             {
-                connection = new SqlConnection(connectString);
-                connection.Open();
-                tran = connection.BeginTransaction();
+                Connection = new SqlConnection(ConnectString);
+                Connection.Open();
+                Tran = Connection.BeginTransaction();
 
-                this.select(connection,tran);
-                this.insert(connection, tran);
-                this.delete(connection, tran);
+                this.Select(Connection, Tran);
+                this.Insert(Connection, Tran);
+                this.Delete(Connection, Tran);
 
-                tran.Commit();
+                Tran.Commit();
 
             }
             catch (Exception e)
             {
-                if ( tran != null )
+                if (Tran != null )
                 {
-                    tran.Rollback();
+                    Tran.Rollback();
                 }
                 throw;
             }
@@ -50,9 +50,9 @@ namespace WebApplication2.Controllers
             {
                 try
                 {
-                    if ( connection != null )
+                    if ( Connection != null )
                     {
-                        connection.Close();
+                        Connection.Close();
                     }
                 }
                 catch (Exception e) { }
@@ -61,53 +61,67 @@ namespace WebApplication2.Controllers
             return View();
         }
 
-        private void select(SqlConnection connection, SqlTransaction tran)
+        private void Select(SqlConnection Connection, SqlTransaction Tran)
         {
 
-            SqlCommand command = new SqlCommand("select * from dbo_Table_3", connection);
-            command.Transaction = tran;
-            SqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
+            SqlDataReader Reader = null;
+
+            try
             {
-                string aaaa = reader.GetString(0);
-                Trace.WriteLine("Aaaa:" + aaaa);
+
+                SqlCommand Command = new SqlCommand("select * from dbo_Table_3", Connection);
+                Command.Transaction = Tran;
+                Reader = Command.ExecuteReader();
+                while (Reader.Read())
+                {
+                    string Aaaa = Reader.GetString(0);
+                    Trace.WriteLine("Aaaa:" + Aaaa);
+                }
+
+            }
+            finally
+            {
+                if ( Reader != null )
+                {
+                    Reader.Close();
+                }
             }
 
         }
 
-        private void insert(SqlConnection connection, SqlTransaction tran)
+        private void Insert(SqlConnection Connection, SqlTransaction Tran)
         {
 
             Trace.WriteLine("before insert:");
-            this.select(connection, tran);
+            this.Select(Connection, Tran);
 
             // updateÇ‡SQLï∂Ç™à·Ç§ÇæÇØÇ≈ÅAèàóùÇÕìØÇ∂
-            SqlCommand command = new SqlCommand("insert into dbo_Table_3 values(@Aaaa)", connection);
-            command.Transaction = tran;
-            command.Parameters.AddWithValue("@Aaaa", "99999");
-            int rows = command.ExecuteNonQuery();
+            SqlCommand Command = new SqlCommand("insert into dbo_Table_3 values(@Aaaa)", Connection);
+            Command.Transaction = Tran;
+            Command.Parameters.AddWithValue("@Aaaa", "99999");
+            int Rows = Command.ExecuteNonQuery();
 
             //throw new Exception("exception occured");
 
             Trace.WriteLine("after insert:");
-            this.select(connection, tran);
+            this.Select(Connection, Tran);
 
         }
 
-        private void delete(SqlConnection connection, SqlTransaction tran)
+        private void Delete(SqlConnection Connection, SqlTransaction Tran)
         {
 
             Trace.WriteLine("before delete:");
-            this.select(connection, tran);
+            this.Select(Connection, Tran);
 
             // updateÇ‡SQLï∂Ç™à·Ç§ÇæÇØÇ≈ÅAèàóùÇÕìØÇ∂
-            SqlCommand command = new SqlCommand("delete from dbo_Table_3 where Aaaa=@Aaaa", connection);
-            command.Transaction = tran;
-            command.Parameters.AddWithValue("@Aaaa", "99999");
-            int rows = command.ExecuteNonQuery();
+            SqlCommand Command = new SqlCommand("delete from dbo_Table_3 where Aaaa=@Aaaa", Connection);
+            Command.Transaction = Tran;
+            Command.Parameters.AddWithValue("@Aaaa", "99999");
+            int Rows = Command.ExecuteNonQuery();
 
             Trace.WriteLine("after delete:");
-            this.select(connection, tran);
+            this.Select(Connection, Tran);
 
         }
 
